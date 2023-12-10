@@ -1,0 +1,17 @@
+{
+  "name": "do",
+  "version": "1.0.0",
+  "description": "CLI-based to-do application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "productivity"
+  ],
+  "author": "Ritik Sahni",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^11.1.0"
+  }
+}
