@@ -22,7 +22,7 @@
     "email": "ritiksahni0203@gmail.com"
   },
   "bin": {
-    "do": "bin/index.js"
+    "todo": "bin/index.js"
   },
   "dependencies": {
     "commander": "^11.1.0"

@@ -19,19 +19,19 @@ npm install -g @ritiksahni/do
 ### Adding Todo Items
 
 ```
-do add "<task details here>"
+todo add "<task details here>"
 ```
 
 ### Listing Todos
 
 ```
-do list
+todo list
 ```
 
 ### Clearing Todo List
 
 ```
-do clear
+todo clear
 ```
 
 ## Initialization
