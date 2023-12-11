@@ -1,6 +1,6 @@
 {
   "name": "@ritiksahni/do",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI-based to-do application.",
   "main": "index.js",
   "scripts": {
