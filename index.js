@@ -1,62 +1,91 @@
 const { program } = require("commander");
 const fs = require("fs");
+const os = require("os");
+const path = require("path");
 
-function addTask(task) {
-    const data = require("./config/tasks.json");
+// Get the user's home directory
+const homeDir = os.homedir();
 
-    if (data.tasks.includes(task)) {
-        console.log("Task already exists");
+// Specify the configuration file path
+const configFile = path.join(homeDir, ".config/todo.json");
+
+// Read the configuration file
+fs.readFile(configFile, "utf8", (err, data) => {
+    if (err) {
+        console.log("Configuration file not found. Creating one...");
+        initConfig(); // Run initConfig() if the configuration file doesn't exist
         return;
     }
 
-    data.tasks.push(task);
+    // Parse the configuration data (assuming it's in JSON format)
+    const config = JSON.parse(data);
 
-    fs.writeFile("./config/tasks.json", JSON.stringify(data), (err) => {
-        if (err) {
-            console.log(err);
+    function addTask(task) {
+        if (config.tasks.includes(task)) {
+            console.log("Task already exists");
             return;
         }
-    });
-}
 
-function listTasks() {
-    const data = require("./config/tasks.json");
-    data.tasks.forEach((task, index) => {
-        console.log(`${index + 1}. ${task}`);
-    });
-}
+        config.tasks.push(task);
 
-function clearTasks() {
-    const data = require("./config/tasks.json");
-    data.tasks = [];
-    fs.writeFile("./config/tasks.json", JSON.stringify(data), (err) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-    });
-}
+        fs.writeFile(configFile, JSON.stringify(config), (err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    }
 
-program
-    .command("add")
-    .description("Add a todo")
-    .argument("<string>", "Task to add")
-    .action((str) => {
-        addTask(str);
-    });
+    function listTasks() {
+        config.tasks.forEach((task, index) => {
+            console.log(`${index + 1}. ${task}`);
+        });
+    }
 
-program
-    .command("list")
-    .description("List all tasks")
-    .action(() => {
-        listTasks();
-    });
+    function clearTasks() {
+        config.tasks = [];
+        fs.writeFile(configFile, JSON.stringify(config), (err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    }
 
-program
-    .command("clear")
-    .description("Clear all tasks")
-    .action(() => {
-        clearTasks();
-    });
+    function initConfig() {
+        const config = {
+            tasks: [],
+        };
 
-program.parse();
+        fs.writeFile(configFile, JSON.stringify(config), (err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    }
+
+    program
+        .command("add")
+        .description("Add a todo")
+        .argument("<string>", "Task to add")
+        .action((str) => {
+            addTask(str);
+        });
+
+    program
+        .command("list")
+        .description("List all tasks")
+        .action(() => {
+            listTasks();
+        });
+
+    program
+        .command("clear")
+        .description("Clear all tasks")
+        .action(() => {
+            clearTasks();
+        });
+
+    program.parse();
+});
