@@ -1,5 +1,5 @@
 {
-  "name": "do",
+  "name": "@ritiksahni/do",
   "version": "1.0.0",
   "description": "CLI-based to-do application.",
   "main": "index.js",
@@ -7,11 +7,25 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "productivity"
+    "productivity",
+    "cli"
   ],
-  "author": "Ritik Sahni",
+  "author": "Ritik Sahni <ritiksahni>",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ritiksahni/do.git"
+  },
+  "homepage": "https://github.com/ritiksahni/do.git",
+  "bugs": {
+    "url": "https://github.com/ritiksahni/do/issues",
+    "email": "ritiksahni0203@gmail.com"
+  },
+  "bin": {
+    "do": "bin/index.js"
+  },
   "dependencies": {
     "commander": "^11.1.0"
-  }
+  },
+  "devDependencies": {}
 }
