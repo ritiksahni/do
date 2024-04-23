@@ -17,18 +17,62 @@ fs.readFile(configFile, "utf8", (err, data) => {
         initConfig(); // Run initConfig() if the configuration file doesn't exist
         return;
     }
-
     // Parse the configuration data (assuming it's in JSON format)
     const config = JSON.parse(data);
 
     function addTask(task) {
-        if (config.tasks.includes(task)) {
+        if (config.tasks.some(t => t.task === task)) {
             console.log("Task already exists");
             return;
         }
+    
+        const newTask = {
+            task: task,
+            isDone: false
+        };
+    
+        config.tasks.push(newTask);
+    
+        fs.writeFile(configFile, JSON.stringify(config), (err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    }
+    
+    function listTasks() {
+        config.tasks.forEach((task) => {
+            const status = task.isDone ? "[x]" : "[ ]";
+            console.log(`- ${status} ${task.task}`);
+        });
+    }
+    
+    function solveTask(taskFragment) {
+        const matchingTasks = config.tasks.filter(t => t.task.includes(taskFragment));
 
-        config.tasks.push(task);
+        if (matchingTasks.length === 0) {
+            console.log("No matching tasks found.");
+            return;
+        }
 
+        const exactMatch = matchingTasks.find(t => t.task === taskFragment);
+        if (exactMatch) {
+            exactMatch.isDone = true;
+            fs.writeFile(configFile, JSON.stringify(config), (err) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+            });
+            return;
+        }
+        if (matchingTasks.length > 1) {
+            console.log("Multiple matching tasks found containing that name. Please specify the task to mark as done.");
+            return;
+        }
+        const task = matchingTasks[0];
+        task.isDone = true;
         fs.writeFile(configFile, JSON.stringify(config), (err) => {
             if (err) {
                 console.log(err);
@@ -37,9 +81,36 @@ fs.readFile(configFile, "utf8", (err, data) => {
         });
     }
 
-    function listTasks() {
-        config.tasks.forEach((task, index) => {
-            console.log(`${index + 1}. ${task}`);
+    function unsolveTask(taskFragment) {
+        const matchingTasks = config.tasks.filter(t => t.task.includes(taskFragment));
+
+        if (matchingTasks.length === 0) {
+            console.log("No matching tasks found.");
+            return;
+        }
+        
+        const exactMatch = matchingTasks.find(t => t.task === taskFragment);
+        if (exactMatch) {
+            exactMatch.isDone = false;
+            fs.writeFile(configFile, JSON.stringify(config), (err) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+            });
+            return;
+        }
+        if (matchingTasks.length > 1) {
+            console.log("Multiple matching tasks found containing that name. Please specify the task to mark as undone.");
+            return;
+        }
+        const task = matchingTasks[0];
+        task.isDone = false;
+        fs.writeFile(configFile, JSON.stringify(config), (err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
         });
     }
 
@@ -79,6 +150,23 @@ fs.readFile(configFile, "utf8", (err, data) => {
         .description("List all tasks")
         .action(() => {
             listTasks();
+        });
+
+
+    program
+        .command("done")
+        .description("Mark a task as done")
+        .argument("<string>", "Task name (or part of it)")
+        .action((task) => {
+            solveTask(task);
+        });
+
+    program
+        .command("undo")
+        .description("Mark a task as undone")
+        .argument("<string>", "Task name (or part of it)")
+        .action((task) => {
+            unsolveTask(task);
         });
 
     program
