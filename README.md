@@ -34,6 +34,19 @@ todo list
 todo clear
 ```
 
+
+### Mark a task as done
+
+```
+todo done "task name (or part of it)"
+```
+
+### Mark a task as undone
+
+```
+todo undo "task name (or part of it)"
+```
+
 ## Initialization
 
 Upon running `do` for the first time, a configuration file will be initialized to store your todo list data.

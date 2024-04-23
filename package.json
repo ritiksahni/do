@@ -1,6 +1,6 @@
 {
   "name": "@ritiksahni/do",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "CLI-based to-do application.",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "homepage": "https://github.com/ritiksahni/do.git",
   "bugs": {
     "url": "https://github.com/ritiksahni/do/issues",
-    "email": "ritiksahni0203@gmail.com"
+    "email": "ritik@ritiksahni.com"
   },
   "bin": {
     "todo": "bin/index.js"
