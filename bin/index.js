@@ -41,39 +41,39 @@ fs.readFile(configFile, "utf8", (err, data) => {
         });
     }
     
-    function deleteTask(taskFragment) {
-    	const matchingTasks = config.tasks.filter(t => t.task.includes(taskFragment));
+    
+	function deleteTask(taskFragment) {
+		const matchingTasks = config.tasks.filter(t => t.task.includes(taskFragment));
 
 		if (matchingTasks.length === 0) {
-            console.log("No matching tasks found.");
-            return;
-        }
-
-        const exactMatch = matchingTasks.find(t => t.task === taskFragment);
-		if (exactMatch){
-			config.tasks.pop(exactMatch);
-			fs.writeFile(configFile, JSON.stringify(config), (err) => {
-				if(err){
-					console.log(err);
-					return;
-				}
-			});
+			console.log("No matching tasks found.");
+			return;
 		}
 
-		if (matchingTasks.length > 1){
+		if (matchingTasks.length > 1 && !matchingTasks.some(t => t.task === taskFragment)) {
 			console.log("Multiple matching tasks found containing that name. Please specify the task to delete.");
 			return;
 		}
 
-		config.tasks.pop(matchingTasks[0]);
-        fs.writeFile(configFile, JSON.stringify(config), (err) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
-        });
-    }
-    function listTasks() {
+		const exactMatch = matchingTasks.find(t => t.task === taskFragment);
+
+		if (exactMatch) {
+			const taskIndex = config.tasks.indexOf(exactMatch);
+			config.tasks.splice(taskIndex, 1);
+		} else {
+			const taskIndex = config.tasks.indexOf(matchingTasks[0]);
+			config.tasks.splice(taskIndex, 1);
+		}
+
+		fs.writeFile(configFile, JSON.stringify(config), (err) => {
+			if (err) {
+				console.log(err);
+				return;
+			}
+		});
+	}
+
+	function listTasks() {
         config.tasks.forEach((task) => {
             const status = task.isDone ? "[x]" : "[ ]";
             console.log(`- ${status} ${task.task}`);
