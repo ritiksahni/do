@@ -41,6 +41,38 @@ fs.readFile(configFile, "utf8", (err, data) => {
         });
     }
     
+    function deleteTask(taskFragment) {
+    	const matchingTasks = config.tasks.filter(t => t.task.includes(taskFragment));
+
+		if (matchingTasks.length === 0) {
+            console.log("No matching tasks found.");
+            return;
+        }
+
+        const exactMatch = matchingTasks.find(t => t.task === taskFragment);
+		if (exactMatch){
+			config.tasks.pop(exactMatch);
+			fs.writeFile(configFile, JSON.stringify(config), (err) => {
+				if(err){
+					console.log(err);
+					return;
+				}
+			});
+		}
+
+		if (matchingTasks.length > 1){
+			console.log("Multiple matching tasks found containing that name. Please specify the task to delete.");
+			return;
+		}
+
+		config.tasks.pop(matchingTasks[0]);
+        fs.writeFile(configFile, JSON.stringify(config), (err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    }
     function listTasks() {
         config.tasks.forEach((task) => {
             const status = task.isDone ? "[x]" : "[ ]";
@@ -71,7 +103,7 @@ fs.readFile(configFile, "utf8", (err, data) => {
             console.log("Multiple matching tasks found containing that name. Please specify the task to mark as done.");
             return;
         }
-        const task = matchingTasks[0];
+        let task = matchingTasks[0];
         task.isDone = true;
         fs.writeFile(configFile, JSON.stringify(config), (err) => {
             if (err) {
@@ -104,7 +136,7 @@ fs.readFile(configFile, "utf8", (err, data) => {
             console.log("Multiple matching tasks found containing that name. Please specify the task to mark as undone.");
             return;
         }
-        const task = matchingTasks[0];
+        let task = matchingTasks[0];
         task.isDone = false;
         fs.writeFile(configFile, JSON.stringify(config), (err) => {
             if (err) {
@@ -175,6 +207,14 @@ fs.readFile(configFile, "utf8", (err, data) => {
         .action(() => {
             clearTasks();
         });
+	
+	program
+		.command("delete")
+		.description("Delete a particular task")
+		.argument("<string>", "Task name (or part of it)")
+		.action((task) => {
+			deleteTask(task);
+		})
 
     program.parse();
 });

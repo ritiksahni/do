@@ -22,6 +22,12 @@ npm install -g @ritiksahni/do
 todo add "<task details here>"
 ```
 
+### Deleting Todo Items
+
+```
+todo delete "<task details here>"
+```
+
 ### Listing Todos
 
 ```
