@@ -156,6 +156,40 @@ fs.readFile(configFile, "utf8", (err, data) => {
         });
     }
 
+    function editTask(oldTask, newTask) {
+        const matchingTasks = config.tasks.filter(t => t.task.includes(oldTask));
+
+        if (matchingTasks.length === 0) {
+            console.log("No matching tasks found.");
+            return;
+        }
+
+        const exactMatch = matchingTasks.find(t => t.task === oldTask);
+
+        if (exactMatch) {
+            exactMatch.task = newTask;
+            fs.writeFile(configFile, JSON.stringify(config), (err) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+            });
+            return;
+        }
+        if (matchingTasks.length > 1) {
+            console.log("Multiple matching tasks found containing that name. Please specify the task to rename.");
+            return;
+        }
+        let task = matchingTasks[0];
+        task.task = newTask;
+        fs.writeFile(configFile, JSON.stringify(config), (err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    }
+
     function initConfig() {
         const config = {
             tasks: [],
@@ -215,6 +249,13 @@ fs.readFile(configFile, "utf8", (err, data) => {
 		.action((task) => {
 			deleteTask(task);
 		})
+
+    program
+        .command("edit <old> <new>")
+        .description("Edit a task name")
+        .action((oldTask, newTask) => {
+            editTask(oldTask, newTask);
+        })
 
     program.parse();
 });
