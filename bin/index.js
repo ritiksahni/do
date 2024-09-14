@@ -255,8 +255,6 @@ fs.readFile(configFile, "utf8", (err, data) => {
         .description("Edit a task name")
         .action((oldTask, newTask) => {
             editTask(oldTask, newTask);
-            // console.log(oldTask);
-            // console.log(newTask);
         })
 
     program.parse();
